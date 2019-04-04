@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="telephone">Teléfono (Opcional)</string>
+    <string name="birthday">Fecha de nacimiento (Opcional)</string>
+    <string name="gender">Sexo (Opcional)</string>
+    <string name="female">Femenino</string>
+    <string name="male">Masculino</string>
+    <string name="preferences">Preferencias</string>
+    <string name="country">País</string>
+    <string name="country_selector">Selecciona tu pais</string>
+    <string name="email">Email</string>
+    <string name="user">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="login_button_title">Ingresar</string>
+    <string name="register">Registrate</string>
+    <string name="register_lable">¿Todavia no tienes cuenta en Medcom GO?</string>
+    <string name="login_title">Ingresar con Medcom Go</string>
+    <string name="forgot_password">Restablecer contraseña</string>
+    <string name="forgot_password_title">¿Olvidaste tu contraseña?</string>
+    <string name="forgot_password_send_email">Enviar Correo</string>
+    <string name="forgot_password_success">La contraseña ha sido actualizada, le hemos enviado un correo electrónico con su nueva contraseña.</string>
+    <string name="register_title">Regístrate en Medcom Go</string>
+    <string name="empty_first_name">Campo de nombre vacío</string>
+    <string name="empty_last_name">Campo de apellido vacío</string>
+    <string name="show_password">Mostrar</string>
+    <string name="hide_password">Ocultar</string>
+
+    // Exceptions
+    <string name="exception_message_generic">Por favor asegúrate de escribir tu email y contraseña</string>
+    <string name="exception_wrong_credentials">Por favor asegúrate de escribir tu email y contraseña</string>
+    <string name="exception_invalid_email">Email inválido</string>
+    <string name="exception_invalid_password">Contraseña invalida</string>
+
+    <string name="fb_login_protocol_scheme">fb143346986203418</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register_button_text">Registrar con Medcom Go</string>
+    <string name="login_button_text">Ingresar con Medcom Go</string>
+    <string name="fb_button_text">Ingresar con Facebook</string>
+    <string name="google_button_text">Ingresar con Google</string>
+    <string name="incorrect_source">Se ha logueado con la plataforma equivocada. Por favor, logueese nuevamente con %s.</string>
+    <string name="we_need_your_email">En orden de Iniciar sesión con Facebook necesitamos acceder a su correo.</string>
+    <string name="title_activity_onboarding">OnboardingActivity</string>
+</resources>
