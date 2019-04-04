@@ -1,17 +1,14 @@
-package com.applicaster.onboarding.screen.presentation.onboarding
+package com.applicaster.onboarding.screen.presentation.onboarding.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.applicaster.onboardingscreen.R
 
 
 import com.applicaster.onboarding.screen.presentation.onboarding.OnboardingFragment.OnListFragmentInteractionListener
 import com.applicaster.onboarding.screen.presentation.onboarding.dummy.DummyContent.DummyItem
-
-import kotlinx.android.synthetic.main.fragment_segment.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
@@ -42,8 +39,8 @@ class SegmentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
+//        holder.mIdView.text = item.id
+//        holder.mContentView.text = item.content
 
         with(holder.mView) {
             tag = item
@@ -54,11 +51,12 @@ class SegmentRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
+//        val mIdView: TextView = mView.item_number
+//        val mContentView: TextView = mView.content
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return ""
+//            return super.toString() + " '" + mContentView.text + "'"
         }
     }
 }
