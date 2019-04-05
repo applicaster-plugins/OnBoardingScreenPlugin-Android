@@ -16,7 +16,7 @@ import com.applicaster.onboardingscreen.R
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_segment.view.*
 import android.support.v17.leanback.transition.TransitionHelper.setInterpolator
-
+import com.applicaster.onboarding.screen.utils.BounceInterpolator
 
 
 class SegmentRecyclerViewAdapter(
@@ -49,11 +49,11 @@ class SegmentRecyclerViewAdapter(
                 holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_favorite_selected))
             }
             val bounce = AnimationUtils.loadAnimation(activity, R.anim.bounce)
-            val interpolator = MyBounceInterpolator(0.2, 20.00)
+            val interpolator = BounceInterpolator(0.2, 20.00)
             bounce.interpolator = interpolator
             holder.segmentCardview.startAnimation(bounce)
             Toast.makeText(activity,"Subscribed to " + item.title.en, Toast.LENGTH_LONG).show()
-            mListener?.onListFragmentInteraction(item as Any)
+            mListener?.onSegmentSelected(item)
         }
     }
 
@@ -63,20 +63,5 @@ class SegmentRecyclerViewAdapter(
         val segmentImageView: ImageView = mView.segment_imageview
         val selectIcon: ImageView = mView.selection_icon_imageview
         val segmentCardview: CardView = mView.segement_cardview
-    }
-
-    internal inner class MyBounceInterpolator(amplitude: Double, frequency: Double) : android.view.animation.Interpolator {
-        private var mAmplitude = 1.0
-        private var mFrequency = 10.0
-
-        init {
-            mAmplitude = amplitude
-            mFrequency = frequency
-        }
-
-        override fun getInterpolation(time: Float): Float {
-            return (-1.0 * Math.pow(Math.E, -time / mAmplitude) *
-                    Math.cos(mFrequency * time) + 1).toFloat()
-        }
     }
 }

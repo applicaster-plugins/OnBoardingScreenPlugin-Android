@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import com.applicaster.onboarding.screen.model.Category
 import com.applicaster.onboarding.screen.model.OnBoardingItem
+import com.applicaster.onboarding.screen.model.Segment
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.CategoryRecyclerViewAdapter
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.SegmentRecyclerViewAdapter
 import com.applicaster.onboardingscreen.R
@@ -41,19 +43,19 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         loading_indicator.visibility = View.VISIBLE
 
-        val request = Request.Builder().url("https://api.myjson.com/bins/eowy8").build()
+        val request = Request.Builder().url("https://api.myjson.com/bins/8q70g").build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call?, response: Response?) {
                 val mainHandler = Handler(activity.mainLooper)
-                //grab as string, works fine
+
                 val body = response?.body()?.string()
-                //make my builder, works fine
                 val gson = GsonBuilder().create()
-                // to pass type of class to kotlin ::
                 onBoardingItem = gson.fromJson(body, OnBoardingItem::class.java)
 
-                mainHandler.post { setupAdapters() }
+                mainHandler.post {
+                    setupAdapters()
+                }
             }
 
             override fun onFailure(call: Call?, e: IOException?) {
@@ -85,8 +87,15 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         loading_indicator.visibility = View.GONE
     }
 
-    override fun onListFragmentInteraction(item: Any?) {
-        //
+    override fun onCategorySelected(category: Category?) {
+        var controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
+        segment_list.layoutAnimation = controller
+        segment_list.adapter = SegmentRecyclerViewAdapter(category!!.segments, this, activity)
+        segment_list.scheduleLayoutAnimation()
+    }
+
+    override fun onSegmentSelected(segment: Segment?) {
+
     }
 
     companion object {
@@ -129,5 +138,6 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 }
 
 interface OnListFragmentInteractionListener {
-    fun onListFragmentInteraction(item: Any?)
+    fun onCategorySelected(category: Category?)
+    fun onSegmentSelected(segment: Segment?)
 }

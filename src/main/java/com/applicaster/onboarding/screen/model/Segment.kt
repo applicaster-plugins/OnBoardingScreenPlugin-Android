@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Segment(
         @SerializedName("id")
-        val id: Int,
+        val id: String,
         @SerializedName("imageUrl")
         val imageUrl: String,
         @SerializedName("title")
