@@ -22,8 +22,10 @@ class OnboardingActivity : Activity() {
         setContentView(R.layout.activity_onboarding)
 
         val fragmentTransaction = fragmentManager.beginTransaction()
-        val loadingFragment = OnboardingFragment.newInstance(3)
+        hookListener?.let {
+            val loadingFragment = OnboardingFragment.newInstance(it)
+            fragmentTransaction.add(R.id.fragment_container, loadingFragment, loadingFragment.javaClass.canonicalName).commit()
+        }
 
-        fragmentTransaction.add(R.id.fragment_container, loadingFragment, loadingFragment.javaClass.canonicalName).commit()
     }
 }

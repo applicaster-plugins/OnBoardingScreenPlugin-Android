@@ -3,8 +3,7 @@
     "require_startup_execution": true,
     "class_name": "com.applicaster.onboarding.screen.OnboardingScreenContract"
   },
-  "dependency_repository_url": [
-  ],
+  "dependency_repository_url": [],
   "platform": "android",
   "author_name": "Javier Casaudoumecq",
   "author_email": "j.casaudoumecq@applicaster.com",
@@ -12,6 +11,7 @@
   "name": "Onboarding Screen",
   "description": "A plugin to onboard users and allow them to set up push notifications content personalization",
   "type": "general",
+  "screen": true,
   "identifier": "onboarding",
   "dependency_name": "com.applicaster:OnBoardingScreenPlugin-Android",
   "dependency_version": "1.0.0",
@@ -19,10 +19,21 @@
   "whitelisted_account_ids": [
     "56e92d4b643037000b000000"
   ],
+  "data": {
+    "fields": [
+      {
+        "key": "source",
+        "type": "text_input"
+      },
+      {
+        "key": "type",
+        "type": "select"
+      }
+    ]
+  },
   "min_zapp_sdk": "6.4.0b16",
   "deprecated_since_zapp_sdk": "",
   "unsupported_since_zapp_sdk": "",
   "react_native": false,
-  "custom_configuration_fields": [
-  ]
+  "custom_configuration_fields": []
 }

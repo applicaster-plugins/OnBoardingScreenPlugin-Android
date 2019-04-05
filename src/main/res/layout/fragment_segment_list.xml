@@ -33,7 +33,8 @@
             android:text="Favorite Teams"
             android:layout_marginBottom="10.5dp"
             android:textSize="28sp"
-            android:textColor="#00C499"/>
+            android:textColor="#00C499"
+            android:textStyle="bold"/>
 
         <View
             android:layout_width="match_parent"
@@ -89,6 +90,12 @@
         android:textColor="@color/white"
         android:textAlignment="center"
         android:text="Finish"/>
+
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 
 
 </RelativeLayout>

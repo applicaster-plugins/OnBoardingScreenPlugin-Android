@@ -15,6 +15,7 @@
         android:background="@color/white"/>
 
     <ImageView
+        android:id="@+id/selection_icon_imageview"
         android:layout_width="23dp"
         android:layout_height="23dp"
         android:layout_gravity="end"

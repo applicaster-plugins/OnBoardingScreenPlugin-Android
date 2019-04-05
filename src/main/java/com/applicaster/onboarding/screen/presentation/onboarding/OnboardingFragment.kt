@@ -1,97 +1,102 @@
 package com.applicaster.onboarding.screen.presentation.onboarding
 
 import android.app.Fragment
-import android.content.Context
 import android.graphics.Rect
+import android.opengl.Visibility
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import android.os.Handler
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import com.applicaster.onboarding.screen.model.OnBoardingItem
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.CategoryRecyclerViewAdapter
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.SegmentRecyclerViewAdapter
-import com.applicaster.onboarding.screen.presentation.onboarding.dummy.DummyContent
-import com.applicaster.onboarding.screen.presentation.onboarding.dummy.DummyContent.DummyItem
 import com.applicaster.onboardingscreen.R
+import com.applicaster.plugin_manager.hook.HookListener
 import com.applicaster.util.OSUtil
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_segment_list.*
+import okhttp3.*
+import java.io.IOException
 
-class OnboardingFragment : Fragment() {
 
-    // TODO: Customize parameters
-    private var columnCount = 1
+class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
-    private var listener: OnListFragmentInteractionListener? = null
+    private var client = OkHttpClient()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
+    private var onBoardingItem: OnBoardingItem? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_segment_list, container, false)
+
+
         return view
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        segment_list.adapter = SegmentRecyclerViewAdapter(DummyContent.ITEMS, listener)
+        loading_indicator.visibility = View.VISIBLE
 
+        val request = Request.Builder().url("https://api.myjson.com/bins/eowy8").build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call?, response: Response?) {
+                val mainHandler = Handler(activity.mainLooper)
+                //grab as string, works fine
+                val body = response?.body()?.string()
+                //make my builder, works fine
+                val gson = GsonBuilder().create()
+                // to pass type of class to kotlin ::
+                onBoardingItem = gson.fromJson(body, OnBoardingItem::class.java)
+
+                mainHandler.post { setupAdapters() }
+            }
+
+            override fun onFailure(call: Call?, e: IOException?) {
+                println("Failed to execute request")
+                loading_indicator.visibility = View.GONE
+            }
+        })
+
+        confirmation_button.setOnClickListener {
+            hookListener.onHookFinished()
+        }
+
+    }
+
+    fun setupAdapters() {
+
+        var controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
+
+        segment_list.layoutAnimation = controller
+        segment_list.adapter = SegmentRecyclerViewAdapter(onBoardingItem!!.categories.first().segments, this, activity)
         val size = (OSUtil.getScreenWidth(activity) - OSUtil.convertPixelsToDP(279)) / 4
-
         segment_list.addItemDecoration(GridSpacingItemDecoration(3, size))
+        segment_list.scheduleLayoutAnimation()
 
 
-        category_list.adapter = CategoryRecyclerViewAdapter(DummyContent.ITEMS, listener)
-
+        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem!!.categories, activity, this)
         category_list.addItemDecoration(MarginItemDecoration(OSUtil.convertPixelsToDP(10)))
 
+        loading_indicator.visibility = View.GONE
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+    override fun onListFragmentInteraction(item: Any?) {
+        //
     }
 
     companion object {
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
+        private lateinit var hookListener: HookListener
 
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
+        fun newInstance(listener: HookListener) =
                 OnboardingFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_COLUMN_COUNT, columnCount)
-                    }
+                    hookListener = listener
                 }
     }
 
@@ -121,4 +126,8 @@ class OnboardingFragment : Fragment() {
             }
         }
     }
+}
+
+interface OnListFragmentInteractionListener {
+    fun onListFragmentInteraction(item: Any?)
 }

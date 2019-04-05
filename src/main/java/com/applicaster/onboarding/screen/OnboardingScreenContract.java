@@ -3,6 +3,7 @@ package com.applicaster.onboarding.screen;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.applicaster.atom.model.APAtomError;
 import com.applicaster.hook_screen.HookScreen;
@@ -19,6 +20,8 @@ import com.applicaster.util.UrlSchemeUtil;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.Class.forName;
 
 public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoaderHookUpI, PluginScreen {
 
@@ -42,7 +45,8 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
 
         navigator.goToOnboardingScreen(context, listener);
 
-        UrlSchemeUtil.handleInternalUrlScheme(context,"");
+//        UrlSchemeUtil.handleInternalUrlScheme(context,"ca2019://present?screen_id=61f06fbd-825d-4716-b300-216ead96c737\"");
+
 //        JSManager.getInstance().get(" ", new JSManager.JSManagerCallback() {
 //            @Override
 //            public void onResult(Object atom) {
@@ -86,7 +90,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
 
     @Override
     public void present(Context context, HashMap<String, Object> screenMap, Serializable dataSource, boolean isActivity) {
-
+        Log.d("Something", "HERE");
     }
 
     @Override
