@@ -11,15 +11,20 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.applicaster.app.CustomApplication
+import com.applicaster.onboarding.screen.PluginDataRepository
 import com.applicaster.onboarding.screen.model.Category
 import com.applicaster.onboarding.screen.presentation.onboarding.OnListFragmentInteractionListener
 import com.applicaster.onboarding.screen.utils.BounceInterpolator
 import com.applicaster.onboardingscreen.R
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_category.view.*
 
 class CategoryRecyclerViewAdapter(
         private val mValues: List<Category>,
         private val activity: Activity,
+        private val userLocale: String,
+        private val languages: List<String>,
         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<CategoryRecyclerViewAdapter.ViewHolder>() {
 
@@ -34,16 +39,16 @@ class CategoryRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
 
-        holder.categoryTextView.text = item.title.en
+        holder.categoryTextView.text = item.title?.get(userLocale) ?:
+                item.title?.get(languages.first())
+        Glide.with(activity).load(item.imageUrl).into(holder.categoryImageView)
 
         if (selectedPosition == position) {
-            holder.categoryTextView.setTextColor(activity.resources.getColor(R.color.white))
-            holder.categoryBackgroundLayer.setBackgroundColor(Color.parseColor("#00C499"))
-            holder.categoryImageView.setImageDrawable(activity.resources.getDrawable(R.drawable.liga_test_white))
+            holder.categoryTextView.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.backgroundColor))
+            holder.categoryBackgroundLayer.setBackgroundColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
         } else {
-            holder.categoryTextView.setTextColor(Color.parseColor("#908F95"))
-            holder.categoryBackgroundLayer.setBackgroundColor(Color.parseColor("#EFEEF4"))
-            holder.categoryImageView.setImageDrawable(activity.resources.getDrawable(R.drawable.liga_test))
+            holder.categoryTextView.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.titleColor))
+            holder.categoryBackgroundLayer.setBackgroundColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.categoryBackgroundColor))
         }
 
         holder.categoryCardView.setOnClickListener {

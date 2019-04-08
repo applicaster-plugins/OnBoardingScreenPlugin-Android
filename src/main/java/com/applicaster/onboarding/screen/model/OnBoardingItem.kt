@@ -6,5 +6,7 @@ data class OnBoardingItem(
         @SerializedName("categories")
         val categories: List<Category>,
         @SerializedName("languages")
-        val languages: List<String>
+        val languages: List<String>,
+        @SerializedName("onboardingTexts")
+        val onboardingTexts: OnboardingTexts
 )

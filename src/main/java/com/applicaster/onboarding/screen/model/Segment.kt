@@ -8,5 +8,5 @@ data class Segment(
         @SerializedName("imageUrl")
         val imageUrl: String,
         @SerializedName("title")
-        val title: Title
+        val title: Map<String, String>
 )

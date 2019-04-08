@@ -10,5 +10,5 @@ data class Category(
         @SerializedName("segments")
         val segments: List<Segment>,
         @SerializedName("title")
-        val title: Title
+        val title: Map<String, String>?
 )

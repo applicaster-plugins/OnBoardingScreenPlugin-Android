@@ -1,22 +1,32 @@
 package com.applicaster.onboarding.screen.presentation.onboarding
 
 import android.app.Fragment
+import android.graphics.Color
 import android.graphics.Rect
-import android.opengl.Visibility
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import com.applicaster.app.CustomApplication
+import com.applicaster.onboarding.screen.PluginDataRepository
 import com.applicaster.onboarding.screen.model.Category
 import com.applicaster.onboarding.screen.model.OnBoardingItem
 import com.applicaster.onboarding.screen.model.Segment
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.CategoryRecyclerViewAdapter
 import com.applicaster.onboarding.screen.presentation.onboarding.adapters.SegmentRecyclerViewAdapter
 import com.applicaster.onboardingscreen.R
+import com.applicaster.plugin_manager.Plugin
+import com.applicaster.plugin_manager.PluginManager
 import com.applicaster.plugin_manager.hook.HookListener
+import com.applicaster.plugin_manager.push_plugin.PushContract
+import com.applicaster.plugin_manager.push_plugin.PushManager
+import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
+import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
 import com.applicaster.util.OSUtil
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_segment_list.*
@@ -27,15 +37,13 @@ import java.io.IOException
 class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
     private var client = OkHttpClient()
-
-    private var onBoardingItem: OnBoardingItem? = null
+    private lateinit var onBoardingItem: OnBoardingItem
+    private var categoriesSelected = mutableListOf<String>()
+    private var userLocale = CustomApplication.getDefaultDeviceLocale().language
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_segment_list, container, false)
-
-
-        return view
+        return inflater.inflate(R.layout.fragment_segment_list, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -43,7 +51,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         loading_indicator.visibility = View.VISIBLE
 
-        val request = Request.Builder().url("https://api.myjson.com/bins/8q70g").build()
+        val request = Request.Builder().url(PluginDataRepository.INSTANCE.pluginConfig.onBoardingFeedPath).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call?, response: Response?) {
@@ -54,6 +62,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
                 onBoardingItem = gson.fromJson(body, OnBoardingItem::class.java)
 
                 mainHandler.post {
+                    styleViews()
                     setupAdapters()
                 }
             }
@@ -65,12 +74,35 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         })
 
         confirmation_button.setOnClickListener {
+            registerTags()
             hookListener.onHookFinished()
         }
 
     }
 
-    fun setupAdapters() {
+    private fun styleViews() {
+        title_textview.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.title?.get(userLocale)
+                ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.title?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+
+        subtitle_textview.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.subtitle?.get(userLocale)
+                ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.subtitle?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+
+        confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
+                ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+
+        background_layout.setBackgroundColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.backgroundColor))
+
+        title_textview.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.titleColor))
+
+        subtitle_textview.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+
+        confirmation_button.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.backgroundColor))
+
+        val drawable = confirmation_button.background as GradientDrawable
+        drawable.setColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+    }
+
+    private fun setupAdapters() {
 
         var controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
 
@@ -81,26 +113,62 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         segment_list.scheduleLayoutAnimation()
 
 
-        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem!!.categories, activity, this)
+        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem!!.categories, activity, userLocale, onBoardingItem.languages, this)
         category_list.addItemDecoration(MarginItemDecoration(OSUtil.convertPixelsToDP(10)))
 
         loading_indicator.visibility = View.GONE
     }
 
+    private fun registerTags() {
+        var plugin = PluginManager.getInstance().getInitiatedPlugins(Plugin.Type.PUSH).firstOrNull()?.getInstance<PushContract>()
+        if (plugin == null) {
+            Log.e(TAG, "No push provider configured")
+        } else {
+            PushManager.addTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, categoriesSelected, object : PushTagRegistrationI {
+                override fun pushUnregistrationTagComplete(type: PushPluginsType?, unregistered: Boolean) {
+                }
+
+                override fun pushRregistrationTagComplete(type: PushPluginsType?, registered: Boolean) {
+                    if (registered)
+                        Log.e(TAG, "Registered Tags to provider")
+                    else
+                        Log.e(TAG, "Failed to Register Tags to Provider")
+                }
+            })
+        }
+    }
+
     override fun onCategorySelected(category: Category?) {
-        var controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
+        val controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
         segment_list.layoutAnimation = controller
         segment_list.adapter = SegmentRecyclerViewAdapter(category!!.segments, this, activity)
         segment_list.scheduleLayoutAnimation()
     }
 
     override fun onSegmentSelected(segment: Segment?) {
+        segment?.id?.let {
+            categoriesSelected.add(it)
+            if (categoriesSelected.size > 0) {
+                confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(userLocale)
+                        ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+            }
+        }
+    }
 
+    override fun onSegmentUnSelected(segment: Segment?) {
+        segment?.id?.let {
+            categoriesSelected.remove(it)
+            if (categoriesSelected.size <= 0) {
+                confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
+                        ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+            }
+        }
     }
 
     companion object {
 
         private lateinit var hookListener: HookListener
+        private const val TAG = "ONBOARDING"
 
         @JvmStatic
         fun newInstance(listener: HookListener) =
@@ -140,4 +208,5 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 interface OnListFragmentInteractionListener {
     fun onCategorySelected(category: Category?)
     fun onSegmentSelected(segment: Segment?)
+    fun onSegmentUnSelected(segment: Segment?)
 }

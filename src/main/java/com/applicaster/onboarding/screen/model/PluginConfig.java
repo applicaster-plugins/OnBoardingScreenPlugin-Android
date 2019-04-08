@@ -2,55 +2,43 @@ package com.applicaster.onboarding.screen.model;
 
 public class PluginConfig {
 
-  private String logo;
-  private String title;
-  private String titleTextColor;
-  private Sorting sorting;
+    String onBoardingFeedPath;
+    String backgroundColor;
+    String highlightColor;
+    String titleColor;
+    String categoryBackgroundColor;
+    boolean applyBorder;
 
-  public PluginConfig(String logo, String title, String titleTextColor, Sorting sorting) {
-    this.logo = logo;
-    this.title = title;
-    this.titleTextColor = titleTextColor;
-    this.sorting = sorting;
-  }
-
-  public String getLogo() {
-    return logo;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public String getTitleTextColor() {
-    return titleTextColor;
-  }
-
-  public Sorting getSorting() {
-    return sorting;
-  }
-
-  public enum Sorting {
-    NAME_ASCENDING("Name - Ascending"), NAME_DESCENDING("Name - Descending"), OFF("Off");
-
-    private final String sorting;
-
-    Sorting(String sorting) {
-      this.sorting = sorting;
+    public PluginConfig(String onBoardingFeedPath, String backgroundColor, String highlightColor, String titleColor, String categoryBackgroundColor, boolean applyBorder) {
+        this.onBoardingFeedPath = onBoardingFeedPath;
+        this.backgroundColor = backgroundColor;
+        this.highlightColor = highlightColor;
+        this.titleColor = titleColor;
+        this.categoryBackgroundColor = categoryBackgroundColor;
+        this.applyBorder = applyBorder;
     }
 
-    public static Sorting getEnum(String value) {
-      for (Sorting v : values())
-        if (v.getValue().equalsIgnoreCase(value)) return v;
-      throw new IllegalArgumentException();
+    public String getOnBoardingFeedPath() {
+        return onBoardingFeedPath;
     }
 
-    public String getValue() {
-      return sorting;
+    public String getBackgroundColor() {
+        return backgroundColor;
     }
 
-    @Override public String toString() {
-      return getValue();
+    public String getHighlightColor() {
+        return highlightColor;
     }
-  }
+
+    public String getTitleColor() {
+        return titleColor;
+    }
+
+    public String getCategoryBackgroundColor() {
+        return categoryBackgroundColor;
+    }
+
+    public boolean isApplyBorder() {
+        return applyBorder;
+    }
 }

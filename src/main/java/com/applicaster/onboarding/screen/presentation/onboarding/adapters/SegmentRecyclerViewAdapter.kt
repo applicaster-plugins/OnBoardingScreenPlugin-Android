@@ -2,6 +2,8 @@ package com.applicaster.onboarding.screen.presentation.onboarding.adapters
 
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,14 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.Toast
+import com.applicaster.onboarding.screen.PluginDataRepository
 import com.applicaster.onboarding.screen.model.Segment
 import com.applicaster.onboarding.screen.presentation.onboarding.OnListFragmentInteractionListener
+import com.applicaster.onboarding.screen.utils.BounceInterpolator
 import com.applicaster.onboardingscreen.R
+import com.applicaster.util.OSUtil
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_segment.view.*
-import android.support.v17.leanback.transition.TransitionHelper.setInterpolator
-import com.applicaster.onboarding.screen.utils.BounceInterpolator
 
 
 class SegmentRecyclerViewAdapter(
@@ -43,17 +45,25 @@ class SegmentRecyclerViewAdapter(
         holder.segmentCardview.setOnClickListener {
             if (holder.selectIcon.isSelected) {
                 holder.selectIcon.isSelected = false
-                holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_favorite_unselected))
+                holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_unselected))
+                mListener?.onSegmentUnSelected(item)
+
+                val border = holder.borderLayout.background as GradientDrawable
+                border.setStroke(0, Color.TRANSPARENT)
             } else {
                 holder.selectIcon.isSelected = true
-                holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ic_favorite_selected))
+                holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_selected))
+                mListener?.onSegmentSelected(item)
+
+                if (PluginDataRepository.INSTANCE.pluginConfig.isApplyBorder) {
+                    val border = holder.borderLayout.background as GradientDrawable
+                    border.setStroke(OSUtil.convertPixelsToDP(2), Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+                }
             }
             val bounce = AnimationUtils.loadAnimation(activity, R.anim.bounce)
             val interpolator = BounceInterpolator(0.2, 20.00)
             bounce.interpolator = interpolator
             holder.segmentCardview.startAnimation(bounce)
-            Toast.makeText(activity,"Subscribed to " + item.title.en, Toast.LENGTH_LONG).show()
-            mListener?.onSegmentSelected(item)
         }
     }
 
@@ -63,5 +73,6 @@ class SegmentRecyclerViewAdapter(
         val segmentImageView: ImageView = mView.segment_imageview
         val selectIcon: ImageView = mView.selection_icon_imageview
         val segmentCardview: CardView = mView.segement_cardview
+        val borderLayout: View = mView.border_layout
     }
 }
