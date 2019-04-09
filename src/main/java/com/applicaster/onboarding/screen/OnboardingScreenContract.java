@@ -8,7 +8,11 @@ import com.applicaster.onboarding.screen.mapper.PluginDataMapper;
 import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
+import com.applicaster.util.PreferenceUtil;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoaderHookUpI {
@@ -30,7 +34,12 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
 
     @Override
     public void executeOnApplicationReady(final Context context, final HookListener listener) {
-        navigator.goToOnboardingScreen(context, listener);
+        String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
+        if (selections == null) {
+            navigator.goToOnboardingScreen(context, listener, null);
+        } else {
+            listener.onHookFinished();
+        }
     }
 
     @Override
@@ -43,7 +52,12 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     public boolean handlePluginScheme(Context context, Map<String, String> data) {
         boolean wasHandled = false;
         if (verifiedPluginSchema(data)) {
-            // TODO - logout
+            String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
+            List<String> previousOBSelections = Collections.emptyList();
+            if (selections != null) {
+                previousOBSelections = Arrays.asList(selections);
+            }
+            navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;
         }
         return wasHandled;
@@ -53,8 +67,9 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     private boolean verifiedPluginSchema(Map<String, String> data) {
         boolean verified = false;
         if ("general".equals(data.get("type"))) {
-            verified = true;
-
+            if ("content_preferences".equals(data.get("action"))) {
+                verified = true;
+            }
         }
 
         return verified;

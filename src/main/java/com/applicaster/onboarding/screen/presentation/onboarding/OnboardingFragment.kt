@@ -28,6 +28,7 @@ import com.applicaster.plugin_manager.push_plugin.PushManager
 import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
 import com.applicaster.util.OSUtil
+import com.applicaster.util.PreferenceUtil
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_segment_list.*
 import okhttp3.*
@@ -74,8 +75,10 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         })
 
         confirmation_button.setOnClickListener {
-            registerTags()
-            hookListener.onHookFinished()
+            //            registerTags()
+            PreferenceUtil.getInstance().setStringArrayPref("user_ob_selections", categoriesSelected.toTypedArray())
+            hookListener?.onHookFinished()
+            activity.finish()
         }
 
     }
@@ -107,13 +110,13 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         var controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
 
         segment_list.layoutAnimation = controller
-        segment_list.adapter = SegmentRecyclerViewAdapter(onBoardingItem!!.categories.first().segments, this, activity)
+        segment_list.adapter = SegmentRecyclerViewAdapter(onBoardingItem.categories.first().segments, previousSelections, this, activity)
         val size = (OSUtil.getScreenWidth(activity) - OSUtil.convertPixelsToDP(279)) / 4
         segment_list.addItemDecoration(GridSpacingItemDecoration(3, size))
         segment_list.scheduleLayoutAnimation()
 
 
-        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem!!.categories, activity, userLocale, onBoardingItem.languages, this)
+        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem.categories, activity, userLocale, onBoardingItem.languages, this)
         category_list.addItemDecoration(MarginItemDecoration(OSUtil.convertPixelsToDP(10)))
 
         loading_indicator.visibility = View.GONE
@@ -141,7 +144,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
     override fun onCategorySelected(category: Category?) {
         val controller = AnimationUtils.loadLayoutAnimation(activity, R.anim.layout_animation_fall_down)
         segment_list.layoutAnimation = controller
-        segment_list.adapter = SegmentRecyclerViewAdapter(category!!.segments, this, activity)
+        segment_list.adapter = SegmentRecyclerViewAdapter(category!!.segments, previousSelections, this, activity)
         segment_list.scheduleLayoutAnimation()
     }
 
@@ -167,12 +170,14 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
     companion object {
 
-        private lateinit var hookListener: HookListener
+        private var hookListener: HookListener? = null
+        private var previousSelections: List<String>? = null
         private const val TAG = "ONBOARDING"
 
         @JvmStatic
-        fun newInstance(listener: HookListener) =
+        fun newInstance(listener: HookListener?, selections: List<String>?) =
                 OnboardingFragment().apply {
+                    previousSelections = selections
                     hookListener = listener
                 }
     }

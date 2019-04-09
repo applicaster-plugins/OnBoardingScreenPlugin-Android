@@ -11,7 +11,9 @@ import com.applicaster.plugin_manager.hook.HookListener
 class OnboardingActivity : Activity() {
     companion object {
         private var hookListener: HookListener? = null
-        fun getCallingIntent(context: Context, listener: HookListener): Intent {
+        private var previousSelections: List<String>? = null
+        fun getCallingIntent(context: Context, listener: HookListener, selections: List<String>): Intent {
+            previousSelections = selections
             hookListener = listener
             return Intent(context, OnboardingActivity::class.java)
         }
@@ -23,7 +25,7 @@ class OnboardingActivity : Activity() {
 
         val fragmentTransaction = fragmentManager.beginTransaction()
         hookListener?.let {
-            val loadingFragment = OnboardingFragment.newInstance(it)
+            val loadingFragment = OnboardingFragment.newInstance(it, previousSelections)
             fragmentTransaction.add(R.id.fragment_container, loadingFragment, loadingFragment.javaClass.canonicalName).commit()
         }
 

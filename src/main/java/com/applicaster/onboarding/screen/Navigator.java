@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import com.applicaster.onboarding.screen.presentation.onboarding.OnboardingActivity;
 import com.applicaster.plugin_manager.hook.HookListener;
 
+import java.util.List;
+
 import static com.applicaster.util.OSUtil.getPackageName;
 
 public class Navigator {
@@ -19,7 +21,7 @@ public class Navigator {
         context.startActivity(i);
     }
 
-    public void goToOnboardingScreen(Context context, HookListener listener) {
-        context.startActivity(OnboardingActivity.Companion.getCallingIntent(context, listener));
+    public void goToOnboardingScreen(Context context, HookListener listener, List<String> previouslySelected) {
+        context.startActivity(OnboardingActivity.Companion.getCallingIntent(context, listener, previouslySelected));
     }
 }

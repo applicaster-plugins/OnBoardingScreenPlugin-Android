@@ -1,6 +1,7 @@
 package com.applicaster.onboarding.screen.mapper;
 
 import com.applicaster.onboarding.screen.model.PluginConfig;
+import com.applicaster.util.PreferenceUtil;
 import com.applicaster.util.StringUtil;
 
 import java.util.Map;

@@ -2,12 +2,12 @@ package com.applicaster.onboarding.screen.model;
 
 public class PluginConfig {
 
-    String onBoardingFeedPath;
-    String backgroundColor;
-    String highlightColor;
-    String titleColor;
-    String categoryBackgroundColor;
-    boolean applyBorder;
+    private String onBoardingFeedPath;
+    private String backgroundColor;
+    private String highlightColor;
+    private String titleColor;
+    private String categoryBackgroundColor;
+    private boolean applyBorder;
 
     public PluginConfig(String onBoardingFeedPath, String backgroundColor, String highlightColor, String titleColor, String categoryBackgroundColor, boolean applyBorder) {
         this.onBoardingFeedPath = onBoardingFeedPath;

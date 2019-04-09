@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_segment.view.*
 
 class SegmentRecyclerViewAdapter(
         private val mValues: List<Segment>,
+        private val previouslySelected: List<String>?,
         private val mListener: OnListFragmentInteractionListener?,
         private val activity: Activity)
     : RecyclerView.Adapter<SegmentRecyclerViewAdapter.ViewHolder>() {
@@ -40,6 +41,14 @@ class SegmentRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
 
+        previouslySelected?.let {
+            for (id in it) {
+                if (item.id.equals(id, true)) {
+                    selectItem(holder, item)
+                }
+            }
+        }
+
         Glide.with(activity).load(item.imageUrl).into(holder.segmentImageView)
 
         holder.segmentCardview.setOnClickListener {
@@ -51,14 +60,7 @@ class SegmentRecyclerViewAdapter(
                 val border = holder.borderLayout.background as GradientDrawable
                 border.setStroke(0, Color.TRANSPARENT)
             } else {
-                holder.selectIcon.isSelected = true
-                holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_selected))
-                mListener?.onSegmentSelected(item)
-
-                if (PluginDataRepository.INSTANCE.pluginConfig.isApplyBorder) {
-                    val border = holder.borderLayout.background as GradientDrawable
-                    border.setStroke(OSUtil.convertPixelsToDP(2), Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
-                }
+                selectItem(holder, item)
             }
             val bounce = AnimationUtils.loadAnimation(activity, R.anim.bounce)
             val interpolator = BounceInterpolator(0.2, 20.00)
@@ -68,6 +70,17 @@ class SegmentRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int = mValues.size
+
+    private fun selectItem(holder: ViewHolder, item: Segment) {
+        holder.selectIcon.isSelected = true
+        holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_selected))
+        mListener?.onSegmentSelected(item)
+
+        if (PluginDataRepository.INSTANCE.pluginConfig.isApplyBorder) {
+            val border = holder.borderLayout.background as GradientDrawable
+            border.setStroke(OSUtil.convertPixelsToDP(2), Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+        }
+    }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val segmentImageView: ImageView = mView.segment_imageview
