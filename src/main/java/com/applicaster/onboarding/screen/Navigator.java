@@ -3,6 +3,7 @@ package com.applicaster.onboarding.screen;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.applicaster.onboarding.screen.presentation.onboarding.OnboardingActivity;
 import com.applicaster.plugin_manager.hook.HookListener;
@@ -21,7 +22,7 @@ public class Navigator {
         context.startActivity(i);
     }
 
-    public void goToOnboardingScreen(Context context, HookListener listener, List<String> previouslySelected) {
+    public void goToOnboardingScreen(Context context, @Nullable HookListener listener, @Nullable List<String> previouslySelected) {
         context.startActivity(OnboardingActivity.Companion.getCallingIntent(context, listener, previouslySelected));
     }
 }

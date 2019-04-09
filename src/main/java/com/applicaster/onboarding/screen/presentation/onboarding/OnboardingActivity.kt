@@ -12,7 +12,7 @@ class OnboardingActivity : Activity() {
     companion object {
         private var hookListener: HookListener? = null
         private var previousSelections: List<String>? = null
-        fun getCallingIntent(context: Context, listener: HookListener, selections: List<String>): Intent {
+        fun getCallingIntent(context: Context, listener: HookListener?, selections: List<String>?): Intent {
             previousSelections = selections
             hookListener = listener
             return Intent(context, OnboardingActivity::class.java)
@@ -24,10 +24,8 @@ class OnboardingActivity : Activity() {
         setContentView(R.layout.activity_onboarding)
 
         val fragmentTransaction = fragmentManager.beginTransaction()
-        hookListener?.let {
-            val loadingFragment = OnboardingFragment.newInstance(it, previousSelections)
-            fragmentTransaction.add(R.id.fragment_container, loadingFragment, loadingFragment.javaClass.canonicalName).commit()
-        }
+        val loadingFragment = OnboardingFragment.newInstance(hookListener, previousSelections)
+        fragmentTransaction.add(R.id.fragment_container, loadingFragment, loadingFragment.javaClass.canonicalName).commit()
 
     }
 }

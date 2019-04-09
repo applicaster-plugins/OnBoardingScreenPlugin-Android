@@ -75,7 +75,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         })
 
         confirmation_button.setOnClickListener {
-            //            registerTags()
+            registerTags()
             PreferenceUtil.getInstance().setStringArrayPref("user_ob_selections", categoriesSelected.toTypedArray())
             hookListener?.onHookFinished()
             activity.finish()
