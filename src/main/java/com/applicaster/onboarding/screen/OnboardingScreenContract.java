@@ -8,6 +8,7 @@ import com.applicaster.onboarding.screen.mapper.PluginDataMapper;
 import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
+import com.applicaster.session.SessionStorage;
 import com.applicaster.util.PreferenceUtil;
 
 import java.util.Arrays;
@@ -35,9 +36,12 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     @Override
     public void executeOnApplicationReady(final Context context, final HookListener listener) {
         String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
+
         if (selections == null) {
             navigator.goToOnboardingScreen(context, listener, null);
         } else {
+            List<String> previousOBSelections = Arrays.asList(selections);
+            SessionStorage.INSTANCE.setArray("user_content_preferences", previousOBSelections);
             listener.onHookFinished();
         }
     }
@@ -56,6 +60,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
             List<String> previousOBSelections = Collections.emptyList();
             if (selections != null) {
                 previousOBSelections = Arrays.asList(selections);
+                SessionStorage.INSTANCE.setArray("user_content_preferences", previousOBSelections);
             }
             navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;
