@@ -70,7 +70,10 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
             override fun onFailure(call: Call?, e: IOException?) {
                 println("Failed to execute request")
-                loading_indicator.visibility = View.GONE
+                val mainHandler = Handler(activity.mainLooper)
+                mainHandler.post {
+                    loading_indicator.visibility = View.GONE
+                }
             }
         })
 
