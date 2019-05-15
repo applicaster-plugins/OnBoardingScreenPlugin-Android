@@ -27,6 +27,7 @@ import com.applicaster.plugin_manager.push_plugin.PushContract
 import com.applicaster.plugin_manager.push_plugin.PushManager
 import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
+import com.applicaster.session.SessionStorage
 import com.applicaster.util.OSUtil
 import com.applicaster.util.PreferenceUtil
 import com.google.gson.GsonBuilder
@@ -39,7 +40,6 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
     private var client = OkHttpClient()
     private lateinit var onBoardingItem: OnBoardingItem
-    private var categoriesSelected = mutableListOf<String>()
     private var userLocale = CustomApplication.getDefaultDeviceLocale().language
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +76,8 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         confirmation_button.setOnClickListener {
             registerTags()
-            PreferenceUtil.getInstance().setStringArrayPref("user_ob_selections", categoriesSelected.toTypedArray())
+            PreferenceUtil.getInstance().setStringArrayPref("user_ob_selections", previousSelections.toTypedArray())
+            SessionStorage.set("user_content_preferences", previousSelections.toString())
             hookListener?.onHookFinished()
             activity.finish()
         }
@@ -127,7 +128,17 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         if (plugin == null) {
             Log.e(TAG, "No push provider configured")
         } else {
-            PushManager.addTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, categoriesSelected, object : PushTagRegistrationI {
+            var language = onBoardingItem.languages.first()
+            if (onBoardingItem.languages.contains(userLocale)) {
+                language = userLocale
+            }
+
+            val localizedSelections: MutableList<String> = emptyList<String>().toMutableList()
+            for (item in previousSelections) {
+                localizedSelections.add("$item-$language")
+            }
+
+            PushManager.addTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, localizedSelections, object : PushTagRegistrationI {
                 override fun pushUnregistrationTagComplete(type: PushPluginsType?, unregistered: Boolean) {
                 }
 
@@ -150,8 +161,8 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
     override fun onSegmentSelected(segment: Segment?) {
         segment?.id?.let {
-            categoriesSelected.add(it)
-            if (categoriesSelected.size > 0) {
+            previousSelections.add(it)
+            if (previousSelections.size > 0) {
                 confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(userLocale)
                         ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
             }
@@ -160,8 +171,8 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
     override fun onSegmentUnSelected(segment: Segment?) {
         segment?.id?.let {
-            categoriesSelected.remove(it)
-            if (categoriesSelected.size <= 0) {
+            previousSelections.remove(it)
+            if (previousSelections.size <= 0) {
                 confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
                         ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
             }
@@ -171,13 +182,13 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
     companion object {
 
         private var hookListener: HookListener? = null
-        private var previousSelections: List<String>? = null
+        private var previousSelections: MutableList<String> = emptyList<String>().toMutableList()
         private const val TAG = "ONBOARDING"
 
         @JvmStatic
-        fun newInstance(listener: HookListener?, selections: List<String>?) =
+        fun newInstance(listener: HookListener?, selections: MutableList<String>) =
                 OnboardingFragment().apply {
-                    previousSelections = selections
+                    previousSelections = selections.toMutableList()
                     hookListener = listener
                 }
     }

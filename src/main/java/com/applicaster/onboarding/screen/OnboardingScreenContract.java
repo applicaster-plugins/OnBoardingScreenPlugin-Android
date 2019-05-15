@@ -38,10 +38,10 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
         String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
 
         if (selections == null) {
-            navigator.goToOnboardingScreen(context, listener, null);
+            navigator.goToOnboardingScreen(context, listener, Collections.<String>emptyList());
         } else {
             List<String> previousOBSelections = Arrays.asList(selections);
-            SessionStorage.INSTANCE.setArray("user_content_preferences", previousOBSelections);
+            SessionStorage.INSTANCE.set("user_content_preferences", previousOBSelections.toString());
             listener.onHookFinished();
         }
     }
@@ -60,7 +60,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
             List<String> previousOBSelections = Collections.emptyList();
             if (selections != null) {
                 previousOBSelections = Arrays.asList(selections);
-                SessionStorage.INSTANCE.setArray("user_content_preferences", previousOBSelections);
+                SessionStorage.INSTANCE.set("user_content_preferences", previousOBSelections.toString());
             }
             navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;

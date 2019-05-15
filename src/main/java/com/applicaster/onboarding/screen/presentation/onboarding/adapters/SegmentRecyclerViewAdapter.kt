@@ -44,7 +44,7 @@ class SegmentRecyclerViewAdapter(
         previouslySelected?.let {
             for (id in it) {
                 if (item.id.equals(id, true)) {
-                    selectItem(holder, item)
+                    highlightItem(holder, item)
                 }
             }
         }
@@ -75,6 +75,16 @@ class SegmentRecyclerViewAdapter(
         holder.selectIcon.isSelected = true
         holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_selected))
         mListener?.onSegmentSelected(item)
+
+        if (PluginDataRepository.INSTANCE.pluginConfig.isApplyBorder) {
+            val border = holder.borderLayout.background as GradientDrawable
+            border.setStroke(OSUtil.convertPixelsToDP(2), Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+        }
+    }
+
+    private fun highlightItem(holder: ViewHolder, item: Segment) {
+        holder.selectIcon.isSelected = true
+        holder.selectIcon.setImageDrawable(activity.resources.getDrawable(R.drawable.ob_like_icon_selected))
 
         if (PluginDataRepository.INSTANCE.pluginConfig.isApplyBorder) {
             val border = holder.borderLayout.background as GradientDrawable

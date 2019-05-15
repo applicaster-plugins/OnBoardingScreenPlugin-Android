@@ -11,8 +11,8 @@ import com.applicaster.plugin_manager.hook.HookListener
 class OnboardingActivity : Activity() {
     companion object {
         private var hookListener: HookListener? = null
-        private var previousSelections: List<String>? = null
-        fun getCallingIntent(context: Context, listener: HookListener?, selections: List<String>?): Intent {
+        private var previousSelections: MutableList<String> = emptyList<String>().toMutableList()
+        fun getCallingIntent(context: Context, listener: HookListener?, selections: MutableList<String>): Intent {
             previousSelections = selections
             hookListener = listener
             return Intent(context, OnboardingActivity::class.java)

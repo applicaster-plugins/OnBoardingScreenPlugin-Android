@@ -8,32 +8,59 @@
   "author_name": "Javier Casaudoumecq",
   "author_email": "j.casaudoumecq@applicaster.com",
   "manifest_version": "1.0.0",
-  "name": "Onboarding Screen",
+  "name": "Onboarding",
   "description": "A plugin to onboard users and allow them to set up push notifications content personalization",
   "type": "general",
-  "screen": true,
   "identifier": "onboarding",
+  "ui_builder_support": true,
   "dependency_name": "com.applicaster:OnBoardingScreenPlugin-Android",
   "dependency_version": "1.0.0",
-  "ui_builder_support": true,
   "whitelisted_account_ids": [
-    "56e92d4b643037000b000000"
+    "56e92d4b643037000b000000",
+    "5a53d5ec9349a1000ecadf69"
   ],
-  "data": {
-    "fields": [
-      {
-        "key": "source",
-        "type": "text_input"
-      },
-      {
-        "key": "type",
-        "type": "select"
-      }
-    ]
-  },
-  "min_zapp_sdk": "6.4.0b16",
+  "min_zapp_sdk": "8.2.0-preview1",
   "deprecated_since_zapp_sdk": "",
   "unsupported_since_zapp_sdk": "",
   "react_native": false,
-  "custom_configuration_fields": []
+  "custom_configuration_fields": [
+    {
+      "type": "uploader",
+      "key": "android_assets_bundle",
+      "tooltip_text": "Upload a Zip file following the folder structure and hierarchy guideline of the platform. The Zip file will be extracted during the build time and will add the assets to the resources of the bundle/package. This field does not affect runtime and a change will require a new build of the app version."
+    },
+    {
+      "type": "text",
+      "key": "onBoardingFeedPath",
+      "tooltip_text": "The link to the Onboarding feed"
+    },
+    {
+      "type": "colorpicker",
+      "key": "backgroundColor",
+      "tooltip_text": "Color of the background",
+      "default": "#000000"
+    },
+    {
+      "type": "colorpicker",
+      "key": "highlightColor",
+      "tooltip_text": "The color of the slection and higlight of icons"
+    },
+    {
+      "type": "colorpicker",
+      "key": "titleColor",
+      "tooltip_text": "Color of the top title",
+      "default": "#ffffff"
+    },
+    {
+      "type": "colorpicker",
+      "key": "categoryBackgroundColor",
+      "tooltip_text": "background color of the categories"
+    },
+    {
+      "type": "checkbox",
+      "key": "applyBorder",
+      "tooltip_text": "enable or disable the border around the user selection",
+      "default": 0
+    }
+  ]
 }
