@@ -9,6 +9,7 @@ import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
 //import com.applicaster.session.SessionStorage;
+import com.applicaster.session.SessionStorage;
 import com.applicaster.util.PreferenceUtil;
 
 import java.util.Arrays;
@@ -35,13 +36,13 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
 
     @Override
     public void executeOnApplicationReady(final Context context, final HookListener listener) {
-        String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
+        String[] selections = PreferenceUtil.getInstance().getStringArrayPref("userRecommendationTags", null);
 
         if (selections == null) {
             navigator.goToOnboardingScreen(context, listener, Collections.<String>emptyList());
         } else {
             List<String> previousOBSelections = Arrays.asList(selections);
-//            SessionStorage.INSTANCE.set("user_content_preferences", previousOBSelections.toString());
+            SessionStorage.INSTANCE.set("userRecommendationTags", previousOBSelections.toString(), "onboarding");
             listener.onHookFinished();
         }
     }
@@ -56,11 +57,11 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     public boolean handlePluginScheme(Context context, Map<String, String> data) {
         boolean wasHandled = false;
         if (verifiedPluginSchema(data)) {
-            String[] selections = PreferenceUtil.getInstance().getStringArrayPref("user_ob_selections", null);
+            String[] selections = PreferenceUtil.getInstance().getStringArrayPref("userRecommendationTags", null);
             List<String> previousOBSelections = Collections.emptyList();
             if (selections != null) {
                 previousOBSelections = Arrays.asList(selections);
-//                SessionStorage.INSTANCE.set("user_content_preferences", previousOBSelections.toString());
+                SessionStorage.INSTANCE.set("userRecommendationTags", previousOBSelections.toString(), "onboarding");
             }
             navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;
@@ -72,7 +73,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     private boolean verifiedPluginSchema(Map<String, String> data) {
         boolean verified = false;
         if ("general".equals(data.get("type"))) {
-            if ("content_preferences".equals(data.get("action"))) {
+            if ("ob_preferences".equals(data.get("action"))) {
                 verified = true;
             }
         }

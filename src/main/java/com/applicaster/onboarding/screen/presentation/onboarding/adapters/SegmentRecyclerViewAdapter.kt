@@ -18,6 +18,7 @@ import com.applicaster.onboarding.screen.utils.BounceInterpolator
 import com.applicaster.onboardingscreen.R
 import com.applicaster.util.OSUtil
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_segment.view.*
 
 
@@ -49,7 +50,9 @@ class SegmentRecyclerViewAdapter(
             }
         }
 
-        Glide.with(activity).load(item.imageUrl).into(holder.segmentImageView)
+        Glide.with(activity).load(item.imageUrl)
+                .apply(RequestOptions.placeholderOf(R.drawable.ob_16_9_vertical_placeholder).error(R.drawable.ob_16_9_vertical_placeholder))
+                .into(holder.segmentImageView)
 
         holder.segmentCardview.setOnClickListener {
             if (holder.selectIcon.isSelected) {

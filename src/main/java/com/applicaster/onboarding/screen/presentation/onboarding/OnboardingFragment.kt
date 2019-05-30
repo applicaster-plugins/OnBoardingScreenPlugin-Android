@@ -27,6 +27,7 @@ import com.applicaster.plugin_manager.push_plugin.PushContract
 import com.applicaster.plugin_manager.push_plugin.PushManager
 import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
+import com.applicaster.session.SessionStorage
 //import com.applicaster.session.SessionStorage
 import com.applicaster.util.OSUtil
 import com.applicaster.util.PreferenceUtil
@@ -73,14 +74,19 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
                 val mainHandler = Handler(activity.mainLooper)
                 mainHandler.post {
                     loading_indicator.visibility = View.GONE
+                    activity.finish()
                 }
             }
         })
 
+        if (previousSelections.size == 0) {
+            previousSelections.add("OBDISPLAYED")
+        }
+
         confirmation_button.setOnClickListener {
             registerTags()
-            PreferenceUtil.getInstance().setStringArrayPref("user_ob_selections", previousSelections.toTypedArray())
-//            SessionStorage.set("user_content_preferences", previousSelections.toString())
+            PreferenceUtil.getInstance().setStringArrayPref("userRecommendationTags", previousSelections.toTypedArray())
+            SessionStorage.set("userRecommendationTags", previousSelections.toString(), "onboarding")
             hookListener?.onHookFinished()
             activity.finish()
         }
@@ -94,8 +100,13 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         subtitle_textview.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.subtitle?.get(userLocale)
                 ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.subtitle?.get(this@OnboardingFragment.onBoardingItem.languages.first())
 
-        confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
-                ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+        if (previousSelections.size > 1) {
+            confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(userLocale)
+                    ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+        } else {
+            confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
+                    ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
+        }
 
         background_layout.setBackgroundColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.backgroundColor))
 
@@ -138,7 +149,9 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
             val localizedSelections: MutableList<String> = emptyList<String>().toMutableList()
             for (item in previousSelections) {
-                localizedSelections.add("$item-$language")
+                if (item != "OBDISPLAYED") {
+                    localizedSelections.add("$item-$language")
+                }
             }
 
             PushManager.addTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, localizedSelections, object : PushTagRegistrationI {

@@ -11,13 +11,13 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.applicaster.app.CustomApplication
 import com.applicaster.onboarding.screen.PluginDataRepository
 import com.applicaster.onboarding.screen.model.Category
 import com.applicaster.onboarding.screen.presentation.onboarding.OnListFragmentInteractionListener
 import com.applicaster.onboarding.screen.utils.BounceInterpolator
 import com.applicaster.onboardingscreen.R
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_category.view.*
 
 class CategoryRecyclerViewAdapter(
@@ -41,7 +41,9 @@ class CategoryRecyclerViewAdapter(
 
         holder.categoryTextView.text = item.title?.get(userLocale) ?:
                 item.title?.get(languages.first())
-        Glide.with(activity).load(item.imageUrl).into(holder.categoryImageView)
+        Glide.with(activity).load(item.imageUrl)
+                .apply(RequestOptions.placeholderOf(R.drawable.ob_category_placeholder).error(R.drawable.ob_category_placeholder))
+                .into(holder.categoryImageView)
 
         if (selectedPosition == position) {
             holder.categoryTextView.setTextColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.backgroundColor))
