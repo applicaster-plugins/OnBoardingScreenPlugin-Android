@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import com.applicaster.app.CustomApplication
@@ -52,7 +54,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loading_indicator.visibility = View.VISIBLE
+        loading_indicator.visibility = VISIBLE
 
         val request = Request.Builder().url(PluginDataRepository.INSTANCE.pluginConfig.onBoardingFeedPath).build()
 
@@ -74,7 +76,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
                 println("Failed to execute request")
                 val mainHandler = Handler(activity.mainLooper)
                 mainHandler.post {
-                    loading_indicator.visibility = View.GONE
+                    loading_indicator.visibility = GONE
                     activity.finish()
                 }
             }
@@ -132,10 +134,14 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         segment_list.scheduleLayoutAnimation()
 
 
-        category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem.categories, activity, userLocale, onBoardingItem.languages, this)
-        category_list.addItemDecoration(MarginItemDecoration(OSUtil.convertPixelsToDP(10)))
+        if (onBoardingItem.categories.size > 1) {
+            category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem.categories, activity, userLocale, onBoardingItem.languages, this)
+            category_list.addItemDecoration(MarginItemDecoration(OSUtil.convertPixelsToDP(10)))
+        } else {
+            category_list.visibility = GONE
+        }
 
-        loading_indicator.visibility = View.GONE
+        loading_indicator.visibility = GONE
     }
 
     private fun registerTags() {
@@ -155,6 +161,13 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
                 }
             }
 
+            val localizedDeSelections: MutableList<String> = emptyList<String>().toMutableList()
+            for (item in deSelectedItems) {
+                if (item != DISPLAYED) {
+                    localizedDeSelections.add("$item-$language")
+                }
+            }
+
             PushManager.addTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, localizedSelections, object : PushTagRegistrationI {
                 override fun pushUnregistrationTagComplete(type: PushPluginsType?, unregistered: Boolean) {
                 }
@@ -164,6 +177,19 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
                         Log.e(TAG, "Registered Tags to provider")
                     else
                         Log.e(TAG, "Failed to Register Tags to Provider")
+                }
+            })
+
+            PushManager.removeTagToPlugins(CustomApplication.getAppContext(), plugin.pluginType, localizedDeSelections, object : PushTagRegistrationI {
+                override fun pushRregistrationTagComplete(type: PushPluginsType?, registered: Boolean) {
+
+                }
+
+                override fun pushUnregistrationTagComplete(type: PushPluginsType?, unregistered: Boolean) {
+                    if (unregistered)
+                        Log.e(TAG, "Unregistered Tags to provider")
+                    else
+                        Log.e(TAG, "Failed to Unregistered Tags to Provider")
                 }
             })
         }
@@ -179,6 +205,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
     override fun onSegmentSelected(segment: Segment?) {
         segment?.id?.let {
             previousSelections.add(it)
+            deSelectedItems.remove(it)
             if (previousSelections.size > 0) {
                 confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(userLocale)
                         ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.finishOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
@@ -189,6 +216,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
     override fun onSegmentUnSelected(segment: Segment?) {
         segment?.id?.let {
             previousSelections.remove(it)
+            deSelectedItems.add(it)
             if (previousSelections.size <= 0) {
                 confirmation_button.text = this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(userLocale)
                         ?: this@OnboardingFragment.onBoardingItem.onboardingTexts.skipOnboarding?.get(this@OnboardingFragment.onBoardingItem.languages.first())
@@ -200,6 +228,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         private var hookListener: HookListener? = null
         private var previousSelections: MutableList<String> = emptyList<String>().toMutableList()
+        private var deSelectedItems: MutableList<String> = emptyList<String>().toMutableList()
         private const val TAG = "ONBOARDING"
         private const val DISPLAYED = "OBDISPLAYED"
 

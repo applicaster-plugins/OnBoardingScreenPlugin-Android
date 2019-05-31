@@ -11,3 +11,6 @@ All notable changes to this project will be documented in this file.
 - Fixing launching of plugin
 - Fixing Styling
 
+## 1.0.2
+- Adding Unregistering Tag Login
+

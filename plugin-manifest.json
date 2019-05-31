@@ -7,14 +7,14 @@
   "platform": "android",
   "author_name": "Javier Casaudoumecq",
   "author_email": "j.casaudoumecq@applicaster.com",
-  "manifest_version": "1.0.1",
+  "manifest_version": "1.0.2",
   "name": "Onboarding",
   "description": "A plugin to onboard users and allow them to set up push notifications content personalization",
   "type": "general",
   "identifier": "onboarding",
   "ui_builder_support": true,
   "dependency_name": "com.applicaster:OnBoardingScreenPlugin-Android",
-  "dependency_version": "1.0.1",
+  "dependency_version": "1.0.2",
   "whitelisted_account_ids": [
     "56e92d4b643037000b000000",
     "5a53d5ec9349a1000ecadf69"
