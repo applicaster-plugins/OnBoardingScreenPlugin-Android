@@ -1,21 +1,13 @@
-Change Log
-==========
+# OnBoarding Change Log
 
-Version 1.0.0 *(2018-03-22)*
-----------------------------
-* Initial version with manual call to the library selector.
+All notable changes to this project will be documented in this file.
 
-Version 1.0.1 *(2018-03-26)*
-----------------------------
-* Adding password textfield show and hide functionality.
-* Fixing several text fields
+## 1.0.0
 
-Version 1.0.2 *(2018-04-13)*
-----------------------------
-* Changing layout so that Registration is on its own line (improves UX)
-* Fixing typos in several labels 
+- Initial release with push notification registration completed
 
-Version 1.0.3 *(2018-04-27)*
-----------------------------
-* Fixing issue with label text colors
+## 1.0.1
+- Adding Session Storage
+- Fixing launching of plugin
+- Fixing Styling
 

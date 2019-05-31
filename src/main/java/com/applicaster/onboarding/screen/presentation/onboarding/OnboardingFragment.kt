@@ -13,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import com.applicaster.app.CustomApplication
+import com.applicaster.onboarding.screen.OnboardingScreenContract.USER_RECOMMENDATION_KEY
+import com.applicaster.onboarding.screen.OnboardingScreenContract.USER_RECOMMENDATION_NAMESPACE
 import com.applicaster.onboarding.screen.PluginDataRepository
 import com.applicaster.onboarding.screen.model.Category
 import com.applicaster.onboarding.screen.model.OnBoardingItem
@@ -28,7 +30,6 @@ import com.applicaster.plugin_manager.push_plugin.PushManager
 import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
 import com.applicaster.session.SessionStorage
-//import com.applicaster.session.SessionStorage
 import com.applicaster.util.OSUtil
 import com.applicaster.util.PreferenceUtil
 import com.google.gson.GsonBuilder
@@ -80,13 +81,13 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         })
 
         if (previousSelections.size == 0) {
-            previousSelections.add("OBDISPLAYED")
+            previousSelections.add(DISPLAYED)
         }
 
         confirmation_button.setOnClickListener {
             registerTags()
-            PreferenceUtil.getInstance().setStringArrayPref("userRecommendationTags", previousSelections.toTypedArray())
-            SessionStorage.set("userRecommendationTags", previousSelections.toString(), "onboarding")
+            PreferenceUtil.getInstance().setStringArrayPref(USER_RECOMMENDATION_KEY, previousSelections.toTypedArray())
+            SessionStorage.set(USER_RECOMMENDATION_KEY, previousSelections.toString(), USER_RECOMMENDATION_NAMESPACE)
             hookListener?.onHookFinished()
             activity.finish()
         }
@@ -149,7 +150,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
             val localizedSelections: MutableList<String> = emptyList<String>().toMutableList()
             for (item in previousSelections) {
-                if (item != "OBDISPLAYED") {
+                if (item != DISPLAYED) {
                     localizedSelections.add("$item-$language")
                 }
             }
@@ -200,6 +201,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         private var hookListener: HookListener? = null
         private var previousSelections: MutableList<String> = emptyList<String>().toMutableList()
         private const val TAG = "ONBOARDING"
+        private const val DISPLAYED = "OBDISPLAYED"
 
         @JvmStatic
         fun newInstance(listener: HookListener?, selections: MutableList<String>) =
