@@ -8,15 +8,13 @@ import com.applicaster.onboarding.screen.mapper.PluginDataMapper;
 import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
-import com.applicaster.session.SessionStorage;
+//import com.applicaster.session.SessionStorage;
 import com.applicaster.util.PreferenceUtil;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-//import com.applicaster.session.SessionStorage;
 
 public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoaderHookUpI {
 
@@ -46,7 +44,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
             navigator.goToOnboardingScreen(context, listener, Collections.<String>emptyList());
         } else {
             List<String> previousOBSelections = Arrays.asList(selections);
-            SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
+//            SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
             listener.onHookFinished();
         }
     }
@@ -65,7 +63,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
             List<String> previousOBSelections = Collections.emptyList();
             if (selections != null) {
                 previousOBSelections = Arrays.asList(selections);
-                SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
+//                SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
             }
             navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;
