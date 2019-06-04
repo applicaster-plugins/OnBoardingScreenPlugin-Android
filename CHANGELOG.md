@@ -14,3 +14,8 @@ All notable changes to this project will be documented in this file.
 ## 1.0.2
 - Adding Unregistering Tag Login
 
+## 1.0.3
+- Locking to Portrait
+- Removing Session Storage (temporary)
+- Fixing Bug in finalize button logic
+
