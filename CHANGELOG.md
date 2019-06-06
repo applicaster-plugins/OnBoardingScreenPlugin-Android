@@ -19,3 +19,6 @@ All notable changes to this project will be documented in this file.
 - Removing Session Storage (temporary)
 - Fixing Bug in finalize button logic
 
+## 1.0.4
+- Removing Card Background Color
+

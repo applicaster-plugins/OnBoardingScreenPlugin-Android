@@ -54,6 +54,8 @@ class SegmentRecyclerViewAdapter(
                 .apply(RequestOptions.placeholderOf(R.drawable.ob_16_9_vertical_placeholder).error(R.drawable.ob_16_9_vertical_placeholder))
                 .into(holder.segmentImageView)
 
+        holder.segmentCardview.background = null
+
         holder.segmentCardview.setOnClickListener {
             if (holder.selectIcon.isSelected) {
                 holder.selectIcon.isSelected = false
