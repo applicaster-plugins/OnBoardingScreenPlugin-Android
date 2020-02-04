@@ -121,6 +121,9 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         val drawable = confirmation_button.background as GradientDrawable
         drawable.setColor(Color.parseColor(PluginDataRepository.INSTANCE.pluginConfig.highlightColor))
+
+        title_layout.visibility = VISIBLE
+        confirmation_button.visibility = VISIBLE
     }
 
     private fun setupAdapters() {
@@ -132,7 +135,6 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
         val size = (OSUtil.getScreenWidth(activity) - OSUtil.convertPixelsToDP(279)) / 4
         segment_list.addItemDecoration(GridSpacingItemDecoration(3, size))
         segment_list.scheduleLayoutAnimation()
-
 
         if (onBoardingItem.categories.size > 1) {
             category_list.adapter = CategoryRecyclerViewAdapter(onBoardingItem.categories, activity, userLocale, onBoardingItem.languages, this)
