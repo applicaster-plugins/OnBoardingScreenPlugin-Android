@@ -9,6 +9,7 @@ import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
 //import com.applicaster.session.SessionStorage;
+import com.applicaster.storage.LocalStorage;
 import com.applicaster.util.PreferenceUtil;
 
 import java.util.Arrays;
@@ -38,15 +39,18 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
 
     @Override
     public void executeOnApplicationReady(final Context context, final HookListener listener) {
-        String[] selections = PreferenceUtil.getInstance().getStringArrayPref(USER_RECOMMENDATION_KEY, null);
-
+        String[] selections = getStoredSelections();
         if (selections == null) {
             navigator.goToOnboardingScreen(context, listener, Collections.<String>emptyList());
         } else {
             List<String> previousOBSelections = Arrays.asList(selections);
-//            SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
             listener.onHookFinished();
         }
+    }
+
+    private String[] getStoredSelections() {
+        String storedData = LocalStorage.INSTANCE.get(USER_RECOMMENDATION_KEY, USER_RECOMMENDATION_NAMESPACE);
+        return storedData == null ? null : storedData.split(", ");
     }
 
     @Override
@@ -59,11 +63,10 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     public boolean handlePluginScheme(Context context, Map<String, String> data) {
         boolean wasHandled = false;
         if (verifiedPluginSchema(data)) {
-            String[] selections = PreferenceUtil.getInstance().getStringArrayPref(USER_RECOMMENDATION_KEY, null);
+            String[] selections = getStoredSelections();
             List<String> previousOBSelections = Collections.emptyList();
             if (selections != null) {
                 previousOBSelections = Arrays.asList(selections);
-//                SessionStorage.INSTANCE.set(USER_RECOMMENDATION_KEY, previousOBSelections.toString(), USER_RECOMMENDATION_NAMESPACE);
             }
             navigator.goToOnboardingScreen(context, null, previousOBSelections);
             wasHandled = true;

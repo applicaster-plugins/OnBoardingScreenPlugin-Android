@@ -31,7 +31,7 @@ import com.applicaster.plugin_manager.push_plugin.PushContract
 import com.applicaster.plugin_manager.push_plugin.PushManager
 import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
-//import com.applicaster.session.SessionStorage
+import com.applicaster.storage.LocalStorage
 import com.applicaster.util.OSUtil
 import com.applicaster.util.PreferenceUtil
 import com.google.gson.GsonBuilder
@@ -88,8 +88,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         confirmation_button.setOnClickListener {
             registerTags()
-            PreferenceUtil.getInstance().setStringArrayPref(USER_RECOMMENDATION_KEY, previousSelections.toTypedArray())
-//            SessionStorage.set(USER_RECOMMENDATION_KEY, previousSelections.toString(), USER_RECOMMENDATION_NAMESPACE)
+            LocalStorage.set(USER_RECOMMENDATION_KEY, previousSelections.toTypedArray().joinToString(), USER_RECOMMENDATION_NAMESPACE)
             hookListener?.onHookFinished()
             activity.finish()
         }
