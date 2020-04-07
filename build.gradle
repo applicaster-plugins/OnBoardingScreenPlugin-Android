@@ -75,8 +75,6 @@ android {
     }
 }
 
-
-
 dependencies {
     // Applicaster SDK
     def applicasterSDKPath = 'com.applicaster:applicaster-android-sdk:4.0.2'
@@ -84,20 +82,17 @@ dependencies {
     //Check if an open SDK is defined - if not use the closed one.
     def devSDK = findProject(':applicaster-android-sdk')
     if (devSDK != null) {
-        implementation project(':applicaster-android-sdk')
+        api project(':applicaster-android-sdk')
     } else {
         api(applicasterSDKPath)
     }
 
     api 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     api 'com.squareup.retrofit2:retrofit:2.4.0'
     api 'com.squareup.retrofit2:converter-gson:2.4.0'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:1.10.19'
 }
 
 apply from: 'gradle/gradle-bintray-push.gradle'

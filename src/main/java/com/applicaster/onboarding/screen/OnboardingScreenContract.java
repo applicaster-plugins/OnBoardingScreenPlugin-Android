@@ -8,9 +8,7 @@ import com.applicaster.onboarding.screen.mapper.PluginDataMapper;
 import com.applicaster.plugin_manager.PluginSchemeI;
 import com.applicaster.plugin_manager.hook.ApplicationLoaderHookUpI;
 import com.applicaster.plugin_manager.hook.HookListener;
-//import com.applicaster.session.SessionStorage;
 import com.applicaster.storage.LocalStorage;
-import com.applicaster.util.PreferenceUtil;
 
 import java.util.Arrays;
 import java.util.Collections;

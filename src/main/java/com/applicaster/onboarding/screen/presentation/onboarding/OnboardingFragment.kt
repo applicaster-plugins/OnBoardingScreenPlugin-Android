@@ -33,7 +33,6 @@ import com.applicaster.plugin_manager.push_plugin.helper.PushPluginsType
 import com.applicaster.plugin_manager.push_plugin.listeners.PushTagRegistrationI
 import com.applicaster.storage.LocalStorage
 import com.applicaster.util.OSUtil
-import com.applicaster.util.PreferenceUtil
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_segment_list.*
 import okhttp3.*
