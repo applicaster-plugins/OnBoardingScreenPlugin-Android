@@ -7,14 +7,14 @@
   "platform": "android",
   "author_name": "Dmytro Puzak",
   "author_email": "dmytro.puzak@corewillsoft.com",
-  "manifest_version": "1.0.9-dev",
+  "manifest_version": "1.0.9",
   "name": "Onboarding",
   "description": "A plugin to onboard users and allow them to set up push notifications content personalization",
   "type": "general",
   "identifier": "onboarding",
   "ui_builder_support": true,
   "dependency_name": "com.applicaster:OnBoardingScreenPlugin-Android",
-  "dependency_version": "1.0.9-dev",
+  "dependency_version": "1.0.9",
   "whitelisted_account_ids": [
     "56e92d4b643037000b000000",
     "5a53d5ec9349a1000ecadf69"
