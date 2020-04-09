@@ -87,7 +87,7 @@ class OnboardingFragment : Fragment(), OnListFragmentInteractionListener {
 
         confirmation_button.setOnClickListener {
             registerTags()
-            LocalStorage.set(USER_RECOMMENDATION_KEY, previousSelections.toTypedArray().joinToString(), USER_RECOMMENDATION_NAMESPACE)
+            LocalStorage.storageRepository.set(USER_RECOMMENDATION_KEY, previousSelections.toTypedArray().joinToString(), USER_RECOMMENDATION_NAMESPACE)
             hookListener?.onHookFinished()
             activity.finish()
         }

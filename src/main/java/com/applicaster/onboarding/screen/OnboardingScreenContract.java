@@ -47,7 +47,7 @@ public class OnboardingScreenContract implements PluginSchemeI, ApplicationLoade
     }
 
     private String[] getStoredSelections() {
-        String storedData = LocalStorage.INSTANCE.get(USER_RECOMMENDATION_KEY, USER_RECOMMENDATION_NAMESPACE);
+        String storedData = LocalStorage.INSTANCE.getStorageRepository().get(USER_RECOMMENDATION_KEY, USER_RECOMMENDATION_NAMESPACE);
         return storedData == null ? null : storedData.split(", ");
     }
 
